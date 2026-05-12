@@ -107,6 +107,10 @@ export default class StockTable extends Component {
       scoreModalVisible: false,
       currentScoreData: null,
       scoreLoading: false,
+      // 操作记录弹窗状态
+      operationModalVisible: false,
+      operationRecords: [],
+      operationLoading: false,
     };
 
   }
@@ -251,6 +255,31 @@ export default class StockTable extends Component {
 
       //
     }
+
+    // 获取当日操作记录
+    this.fetchDayTradeDetails(value.code, value.openTime.substr(0, 10));
+  };
+
+  // 获取某日的操作记录
+  fetchDayTradeDetails = (code, day) => {
+    this.setState({ operationLoading: true, operationModalVisible: true, operationRecords: [] });
+
+    fetch(`${API_BASE_URL}trade_details/raw_query?code=${code}&startTime=${day} 00:00:00&endTime=${day} 23:59:59`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.code === 0 && data.data) {
+          this.setState({
+            operationRecords: data.data,
+            operationLoading: false,
+          });
+        } else {
+          this.setState({ operationRecords: [], operationLoading: false });
+        }
+      })
+      .catch(err => {
+        console.error('获取操作记录失败:', err);
+        this.setState({ operationRecords: [], operationLoading: false });
+      });
   };
 
   // 生成字符串哈希值的函数
@@ -410,8 +439,53 @@ export default class StockTable extends Component {
     });
   }
 
-  render() {
-    const { data, pagination, loading, reqBody, code, start, end, visible, title } = this.state;
+render() {
+    const { data, pagination, loading, reqBody, code, start, end, visible, title, operationRecords, operationLoading } = this.state;
+
+    // 操作记录表格列定义
+    const operationColumns = [
+      {
+        title: '操作时间',
+        dataIndex: 'tradeTime',
+        key: 'tradeTime',
+        width: 180,
+      },
+      {
+        title: '操作方向',
+        dataIndex: 'opt',
+        key: 'opt',
+        width: 80,
+        render: (text) => text ? '买入' : '卖出',
+      },
+      {
+        title: '数量',
+        dataIndex: 'vol',
+        key: 'vol',
+        width: 100,
+      },
+      {
+        title: '价格',
+        dataIndex: 'price',
+        key: 'price',
+        width: 100,
+        render: (text) => typeof text === 'number' ? text.toFixed(2) : '0.00',
+      },
+      {
+        title: '佣金',
+        dataIndex: 'commission',
+        key: 'commission',
+        width: 100,
+        render: (text) => typeof text === 'number' ? text.toFixed(2) : '0.00',
+      },
+      {
+        title: '税费',
+        dataIndex: 'tax',
+        key: 'tax',
+        width: 100,
+        render: (text) => typeof text === 'number' ? text.toFixed(2) : '0.00',
+      },
+    ];
+
     return (
       <>
         <Space>
@@ -437,21 +511,35 @@ export default class StockTable extends Component {
         />
 
         <Modal
-          width={"85%"} height={"500px"}
-          title="交易详情"
+          width={"85%"}
+          title={title}
           centered={true}
           visible={visible}
-          closable={false}
-          maskClosable={false}
+          onCancel={() => this.setState({ visible: false })}
           footer={[
             <Button type="primary" onClick={() => this.setState({ visible: false })}>
               确定
             </Button>,
-
           ]}
         >
-          <Kline ref={this.myRef} width={"100%"} height={"500px"} title={title} markPoint={{}} code={code} start={start} end={end} term={start}>
-          </Kline>
+          <div style={{ marginBottom: 16 }}>
+            <h4>日K线图</h4>
+            <Kline ref={this.myRef} width={"100%"} height={400} title={title} markPoint={{}} code={code} start={start} end={end} term={start}>
+            </Kline>
+          </div>
+          <Divider dashed />
+          <div>
+            <h4>当日操作记录</h4>
+            <Table
+              columns={operationColumns}
+              dataSource={operationRecords}
+              rowKey={(record, index) => index}
+              loading={operationLoading}
+              pagination={operationRecords.length > 10 ? { pageSize: 10 } : false}
+              size="small"
+              scroll={{ x: 660 }}
+            />
+          </div>
         </Modal>
 
         {/* 评分弹窗 */}
@@ -474,12 +562,12 @@ export default class StockTable extends Component {
             <Row gutter={16}>
               <Col span={24}>
                 <Card title="评分概览">
-                  <Statistic 
-                    title="总评分" 
-                    value={this.state.currentScoreData.totalScore} 
-                    suffix="分" 
+                  <Statistic
+                    title="总评分"
+                    value={this.state.currentScoreData.totalScore}
+                    suffix="分"
                     valueStyle={{ color: this.state.currentScoreData.totalScore >= 80 ? '#52c41a' : this.state.currentScoreData.totalScore >= 60 ? '#faad14' : '#ff4d4f' }}
-                  />
+                    />
                 </Card>
               </Col>
               <Col span={24}>
