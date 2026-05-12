@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.doorway.tradememo.mapper.StockPositionMapper" >
+    <resultMap id="BaseResultMap" type="com.doorway.tradememo.domain.StockPosition" >
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="user_id" property="userId" jdbcType="VARCHAR" />
+        <result column="code" property="code" jdbcType="VARCHAR" />
+        <result column="vol" property="vol" jdbcType="INTEGER" />
+        <result column="cost" property="cost" jdbcType="DECIMAL" />
+        <result column="price" property="price" jdbcType="DECIMAL" />
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+        <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+    
+    <sql id="Base_Column_List" >
+        id, user_id, code, vol, cost, price, created_time, updated_time
+    </sql>
+    
+    <select id="getById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+        select 
+        <include refid="Base_Column_List" />
+        from stock_position
+        where id = #{id,jdbcType=VARCHAR}
+    </select>
+    
+    <delete id="delById" parameterType="java.lang.String" >
+        delete from stock_position
+        where id = #{id,jdbcType=VARCHAR}
+    </delete>
+    
+    <insert id="save" parameterType="com.doorway.tradememo.domain.StockPosition" >
+        insert into stock_position (id, user_id, code, 
+            vol, cost, price, 
+            created_time, updated_time)
+        values (#{id,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, #{code,jdbcType=VARCHAR}, 
+            #{vol,jdbcType=INTEGER}, #{cost,jdbcType=DECIMAL}, #{price,jdbcType=DECIMAL}, 
+            #{createdTime,jdbcType=TIMESTAMP}, #{updatedTime,jdbcType=TIMESTAMP})
+    </insert>
+    
+    <update id="modifySelective" parameterType="com.doorway.tradememo.domain.StockPosition" >
+        update stock_position
+        <set >
+            <if test="userId != null" >
+                user_id = #{userId,jdbcType=VARCHAR},
+            </if>
+            <if test="code != null" >
+                code = #{code,jdbcType=VARCHAR},
+            </if>
+            <if test="vol != null" >
+                vol = #{vol,jdbcType=INTEGER},
+            </if>
+            <if test="cost != null" >
+                cost = #{cost,jdbcType=DECIMAL},
+            </if>
+            <if test="price != null" >
+                price = #{price,jdbcType=DECIMAL},
+            </if>
+            <if test="createdTime != null" >
+                created_time = #{createdTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedTime != null" >
+                updated_time = #{updatedTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+    
+    <update id="modify" parameterType="com.doorway.tradememo.domain.StockPosition" >
+        update stock_position
+        set user_id = #{userId,jdbcType=VARCHAR},
+            code = #{code,jdbcType=VARCHAR},
+            vol = #{vol,jdbcType=INTEGER},
+            cost = #{cost,jdbcType=DECIMAL},
+            price = #{price,jdbcType=DECIMAL},
+            created_time = #{createdTime,jdbcType=TIMESTAMP},
+            updated_time = #{updatedTime,jdbcType=TIMESTAMP}
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+    
+    <select id="getByIds" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from stock_position where id in 
+        <foreach collection="list" item="item" open="(" separator="," close=")" >
+            #{item}
+        </foreach>
+    </select>
+    
+    <select id="getByPojo" resultMap="BaseResultMap" parameterType="com.doorway.tradememo.domain.StockPosition" >
+        select 
+        <include refid="Base_Column_List" />
+        from stock_position 
+        <where >
+            <if test="id != null" >
+                and id = #{id,jdbcType=VARCHAR}
+            </if>
+            <if test="userId != null" >
+                and user_id = #{userId,jdbcType=VARCHAR}
+            </if>
+            <if test="code != null" >
+                and code = #{code,jdbcType=VARCHAR}
+            </if>
+            <if test="vol != null" >
+                and vol = #{vol,jdbcType=INTEGER}
+            </if>
+            <if test="cost != null" >
+                and cost = #{cost,jdbcType=DECIMAL}
+            </if>
+            <if test="price != null" >
+                and price = #{price,jdbcType=DECIMAL}
+            </if>
+            <if test="createdTime != null" >
+                and created_time = #{createdTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="updatedTime != null" >
+                and updated_time = #{updatedTime,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+    </select>
+    
+    <select id="getAll" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from stock_position
+    </select>
+    
+    <select id="getAllCount" resultType="java.lang.Integer" >
+        select count(1) from stock_position
+    </select>
+    
+    <insert id="saveBatch" parameterType="java.util.List" >
+        insert into stock_position (id, user_id, code, vol, cost, price, created_time, updated_time)
+        values
+        <foreach collection="list" item="item" separator="," >
+            (#{item.id,jdbcType=VARCHAR}, #{item.userId,jdbcType=VARCHAR}, #{item.code,jdbcType=VARCHAR}, #{item.vol,jdbcType=INTEGER}, #{item.cost,jdbcType=DECIMAL}, #{item.price,jdbcType=DECIMAL}, #{item.createdTime,jdbcType=TIMESTAMP}, #{item.updatedTime,jdbcType=TIMESTAMP})
+        </foreach>
+    </insert>
+    
+    <delete id="delByIds" >
+        delete from stock_position where id in 
+        <foreach collection="list" item="item" open="(" separator="," close=")" >
+            #{item}
+        </foreach>
+    </delete>
+</mapper>

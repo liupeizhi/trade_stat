@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.doorway.tradememo.mapper.StockMapper" >
+    <resultMap id="BaseResultMap" type="com.doorway.tradememo.domain.Stock" >
+        <id column="code" property="code" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+        <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+    
+    <sql id="Base_Column_List" >
+        code, name, created_time, updated_time
+    </sql>
+    
+    <select id="getById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+        select 
+        <include refid="Base_Column_List" />
+        from stock
+        where code = #{code,jdbcType=VARCHAR}
+    </select>
+    
+    <delete id="delById" parameterType="java.lang.String" >
+        delete from stock
+        where code = #{code,jdbcType=VARCHAR}
+    </delete>
+    
+    <insert id="save" parameterType="com.doorway.tradememo.domain.Stock" >
+        insert into stock (code, name, created_time, 
+            updated_time)
+        values (#{code,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{createdTime,jdbcType=TIMESTAMP}, 
+            #{updatedTime,jdbcType=TIMESTAMP})
+    </insert>
+    
+    <update id="modifySelective" parameterType="com.doorway.tradememo.domain.Stock" >
+        update stock
+        <set >
+            <if test="name != null" >
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="createdTime != null" >
+                created_time = #{createdTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedTime != null" >
+                updated_time = #{updatedTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where code = #{code,jdbcType=VARCHAR}
+    </update>
+    
+    <update id="modify" parameterType="com.doorway.tradememo.domain.Stock" >
+        update stock
+        set name = #{name,jdbcType=VARCHAR},
+            created_time = #{createdTime,jdbcType=TIMESTAMP},
+            updated_time = #{updatedTime,jdbcType=TIMESTAMP}
+        where code = #{code,jdbcType=VARCHAR}
+    </update>
+    
+    <select id="getByIds" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from stock where code in 
+        <foreach collection="list" item="item" open="(" separator="," close=")" >
+            #{item}
+        </foreach>
+    </select>
+    
+    <select id="getByPojo" resultMap="BaseResultMap" parameterType="com.doorway.tradememo.domain.Stock" >
+        select 
+        <include refid="Base_Column_List" />
+        from stock 
+        <where >
+            <if test="code != null" >
+                and code = #{code,jdbcType=VARCHAR}
+            </if>
+            <if test="name != null" >
+                and name = #{name,jdbcType=VARCHAR}
+            </if>
+            <if test="createdTime != null" >
+                and created_time = #{createdTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="updatedTime != null" >
+                and updated_time = #{updatedTime,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+    </select>
+    
+    <select id="getAll" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from stock
+    </select>
+    
+    <select id="getAllCount" resultType="java.lang.Integer" >
+        select count(1) from stock
+    </select>
+    
+    <insert id="saveBatch" parameterType="java.util.List" >
+        insert into stock (code, name, created_time, updated_time)
+        values
+        <foreach collection="list" item="item" separator="," >
+            (#{item.code,jdbcType=VARCHAR}, #{item.name,jdbcType=VARCHAR}, #{item.createdTime,jdbcType=TIMESTAMP}, #{item.updatedTime,jdbcType=TIMESTAMP})
+        </foreach>
+    </insert>
+    
+    <delete id="delByIds" >
+        delete from stock where code in 
+        <foreach collection="list" item="item" open="(" separator="," close=")" >
+            #{item}
+        </foreach>
+    </delete>
+</mapper>

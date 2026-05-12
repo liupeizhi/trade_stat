@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.doorway.tradememo.mapper.BrokerMapper" >
+    <resultMap id="BaseResultMap" type="com.doorway.tradememo.domain.Broker" >
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="com_rate" property="comRate" jdbcType="DECIMAL" />
+        <result column="five_free" property="fiveFree" jdbcType="BIT" />
+        <result column="adress" property="adress" jdbcType="VARCHAR" />
+        <result column="telephone" property="telephone" jdbcType="VARCHAR" />
+        <result column="sh_account" property="shAccount" jdbcType="VARCHAR" />
+        <result column="sz_account" property="szAccount" jdbcType="VARCHAR" />
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+        <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+    
+    <sql id="Base_Column_List" >
+        id, name, com_rate, five_free, adress, telephone, sh_account, sz_account, created_time, 
+        updated_time
+    </sql>
+    
+    <select id="getById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+        select 
+        <include refid="Base_Column_List" />
+        from broker
+        where id = #{id,jdbcType=VARCHAR}
+    </select>
+    
+    <delete id="delById" parameterType="java.lang.String" >
+        delete from broker
+        where id = #{id,jdbcType=VARCHAR}
+    </delete>
+    
+    <insert id="save" parameterType="com.doorway.tradememo.domain.Broker" >
+        insert into broker (id, name, com_rate, 
+            five_free, adress, telephone, 
+            sh_account, sz_account, created_time, 
+            updated_time)
+        values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{comRate,jdbcType=DECIMAL}, 
+            #{fiveFree,jdbcType=BIT}, #{adress,jdbcType=VARCHAR}, #{telephone,jdbcType=VARCHAR}, 
+            #{shAccount,jdbcType=VARCHAR}, #{szAccount,jdbcType=VARCHAR}, #{createdTime,jdbcType=TIMESTAMP}, 
+            #{updatedTime,jdbcType=TIMESTAMP})
+    </insert>
+    
+    <update id="modifySelective" parameterType="com.doorway.tradememo.domain.Broker" >
+        update broker
+        <set >
+            <if test="name != null" >
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="comRate != null" >
+                com_rate = #{comRate,jdbcType=DECIMAL},
+            </if>
+            <if test="fiveFree != null" >
+                five_free = #{fiveFree,jdbcType=BIT},
+            </if>
+            <if test="adress != null" >
+                adress = #{adress,jdbcType=VARCHAR},
+            </if>
+            <if test="telephone != null" >
+                telephone = #{telephone,jdbcType=VARCHAR},
+            </if>
+            <if test="shAccount != null" >
+                sh_account = #{shAccount,jdbcType=VARCHAR},
+            </if>
+            <if test="szAccount != null" >
+                sz_account = #{szAccount,jdbcType=VARCHAR},
+            </if>
+            <if test="createdTime != null" >
+                created_time = #{createdTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedTime != null" >
+                updated_time = #{updatedTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+    
+    <update id="modify" parameterType="com.doorway.tradememo.domain.Broker" >
+        update broker
+        set name = #{name,jdbcType=VARCHAR},
+            com_rate = #{comRate,jdbcType=DECIMAL},
+            five_free = #{fiveFree,jdbcType=BIT},
+            adress = #{adress,jdbcType=VARCHAR},
+            telephone = #{telephone,jdbcType=VARCHAR},
+            sh_account = #{shAccount,jdbcType=VARCHAR},
+            sz_account = #{szAccount,jdbcType=VARCHAR},
+            created_time = #{createdTime,jdbcType=TIMESTAMP},
+            updated_time = #{updatedTime,jdbcType=TIMESTAMP}
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+    
+    <select id="getByIds" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from broker where id in 
+        <foreach collection="list" item="item" open="(" separator="," close=")" >
+            #{item}
+        </foreach>
+    </select>
+    
+    <select id="getByPojo" resultMap="BaseResultMap" parameterType="com.doorway.tradememo.domain.Broker" >
+        select 
+        <include refid="Base_Column_List" />
+        from broker 
+        <where >
+            <if test="id != null" >
+                and id = #{id,jdbcType=VARCHAR}
+            </if>
+            <if test="name != null" >
+                and name = #{name,jdbcType=VARCHAR}
+            </if>
+            <if test="comRate != null" >
+                and com_rate = #{comRate,jdbcType=DECIMAL}
+            </if>
+            <if test="fiveFree != null" >
+                and five_free = #{fiveFree,jdbcType=BIT}
+            </if>
+            <if test="adress != null" >
+                and adress = #{adress,jdbcType=VARCHAR}
+            </if>
+            <if test="telephone != null" >
+                and telephone = #{telephone,jdbcType=VARCHAR}
+            </if>
+            <if test="shAccount != null" >
+                and sh_account = #{shAccount,jdbcType=VARCHAR}
+            </if>
+            <if test="szAccount != null" >
+                and sz_account = #{szAccount,jdbcType=VARCHAR}
+            </if>
+            <if test="createdTime != null" >
+                and created_time = #{createdTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="updatedTime != null" >
+                and updated_time = #{updatedTime,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+    </select>
+    
+    <select id="getAll" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from broker
+    </select>
+    
+    <select id="getAllCount" resultType="java.lang.Integer" >
+        select count(1) from broker
+    </select>
+    
+    <insert id="saveBatch" parameterType="java.util.List" >
+        insert into broker (id, name, com_rate, five_free, adress, telephone, sh_account, sz_account, created_time, updated_time)
+        values
+        <foreach collection="list" item="item" separator="," >
+            (#{item.id,jdbcType=VARCHAR}, #{item.name,jdbcType=VARCHAR}, #{item.comRate,jdbcType=DECIMAL}, #{item.fiveFree,jdbcType=BIT}, #{item.adress,jdbcType=VARCHAR}, #{item.telephone,jdbcType=VARCHAR}, #{item.shAccount,jdbcType=VARCHAR}, #{item.szAccount,jdbcType=VARCHAR}, #{item.createdTime,jdbcType=TIMESTAMP}, #{item.updatedTime,jdbcType=TIMESTAMP})
+        </foreach>
+    </insert>
+    
+    <delete id="delByIds" >
+        delete from broker where id in 
+        <foreach collection="list" item="item" open="(" separator="," close=")" >
+            #{item}
+        </foreach>
+    </delete>
+</mapper>

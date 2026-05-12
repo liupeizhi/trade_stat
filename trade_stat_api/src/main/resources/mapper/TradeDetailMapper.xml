@@ -1,0 +1,421 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.doorway.tradememo.mapper.TradeDetailMapper">
+    <resultMap id="BaseResultMap" type="com.doorway.tradememo.domain.TradeDetail">
+        <id column="id" property="id" jdbcType="VARCHAR"/>
+        <result column="user_id" property="userId" jdbcType="VARCHAR"/>
+        <result column="trade_time" property="tradeTime" jdbcType="TIMESTAMP"/>
+        <result column="opt" property="opt" jdbcType="BIT"/>
+        <result column="price" property="price" jdbcType="DECIMAL"/>
+        <result column="code" property="code" jdbcType="VARCHAR"/>
+        <result column="vol" property="vol" jdbcType="INTEGER"/>
+        <result column="commission" property="commission" jdbcType="DECIMAL"/>
+        <result column="tax" property="tax" jdbcType="DECIMAL"/>
+        <result column="day" property="day" jdbcType="VARCHAR"/>
+        <result column="month" property="month" jdbcType="VARCHAR"/>
+        <result column="year" property="year" jdbcType="VARCHAR"/>
+        <result column="broker_id" property="brokerId" jdbcType="VARCHAR"/>
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP"/>
+        <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP"/>
+        <result column="trans_fee" property="transFee" jdbcType="DECIMAL"/>
+        <result column="term" property="term" jdbcType="VARCHAR"/>
+        <result column="row_key" property="rowKey" jdbcType="VARCHAR"/>
+    </resultMap>
+
+
+    <sql id="Base_Column_List">
+        id, user_id, trade_time, opt, price, code, vol, commission, tax, day, month, year, 
+        broker_id, created_time, updated_time, trans_fee, term, row_key
+    </sql>
+
+    <select id="getById" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from trade_detail
+        where id = #{id,jdbcType=VARCHAR}
+    </select>
+
+    <delete id="delById" parameterType="java.lang.String">
+        delete
+        from trade_detail
+        where id = #{id,jdbcType=VARCHAR}
+    </delete>
+
+    <insert id="save" parameterType="com.doorway.tradememo.domain.TradeDetail">
+        insert into trade_detail (id, user_id, trade_time,
+                                  opt, price, code, vol,
+                                  commission, tax, day,
+                                  month, year, broker_id,
+                                  created_time, updated_time, trans_fee,
+                                  term, row_key)
+        values (#{id,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, #{tradeTime,jdbcType=TIMESTAMP},
+                #{opt,jdbcType=BIT}, #{price,jdbcType=DECIMAL}, #{code,jdbcType=VARCHAR}, #{vol,jdbcType=INTEGER},
+                #{commission,jdbcType=DECIMAL}, #{tax,jdbcType=DECIMAL}, #{day,jdbcType=VARCHAR},
+                #{month,jdbcType=VARCHAR}, #{year,jdbcType=VARCHAR}, #{brokerId,jdbcType=VARCHAR},
+                #{createdTime,jdbcType=TIMESTAMP}, #{updatedTime,jdbcType=TIMESTAMP}, #{transFee,jdbcType=DECIMAL},
+                #{term,jdbcType=VARCHAR}, #{rowKey,jdbcType=VARCHAR})
+    </insert>
+
+    <update id="modifySelective" parameterType="com.doorway.tradememo.domain.TradeDetail">
+        update trade_detail
+        <set>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=VARCHAR},
+            </if>
+            <if test="tradeTime != null">
+                trade_time = #{tradeTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="opt != null">
+                opt = #{opt,jdbcType=BIT},
+            </if>
+            <if test="price != null">
+                price = #{price,jdbcType=DECIMAL},
+            </if>
+            <if test="code != null">
+                code = #{code,jdbcType=VARCHAR},
+            </if>
+            <if test="vol != null">
+                vol = #{vol,jdbcType=INTEGER},
+            </if>
+            <if test="commission != null">
+                commission = #{commission,jdbcType=DECIMAL},
+            </if>
+            <if test="tax != null">
+                tax = #{tax,jdbcType=DECIMAL},
+            </if>
+            <if test="day != null">
+                day = #{day,jdbcType=VARCHAR},
+            </if>
+            <if test="month != null">
+                month = #{month,jdbcType=VARCHAR},
+            </if>
+            <if test="year != null">
+                year = #{year,jdbcType=VARCHAR},
+            </if>
+            <if test="brokerId != null">
+                broker_id = #{brokerId,jdbcType=VARCHAR},
+            </if>
+            <if test="createdTime != null">
+                created_time = #{createdTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedTime != null">
+                updated_time = #{updatedTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="transFee != null">
+                trans_fee = #{transFee,jdbcType=DECIMAL},
+            </if>
+            <if test="term != null">
+                term = #{term,jdbcType=VARCHAR},
+            </if>
+            <if test="rowKey != null">
+                row_key = #{rowKey,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+
+    <update id="modify" parameterType="com.doorway.tradememo.domain.TradeDetail">
+        update trade_detail
+        set user_id      = #{userId,jdbcType=VARCHAR},
+            trade_time   = #{tradeTime,jdbcType=TIMESTAMP},
+            opt          = #{opt,jdbcType=BIT},
+            price        = #{price,jdbcType=DECIMAL},
+            code         = #{code,jdbcType=VARCHAR},
+            vol          = #{vol,jdbcType=INTEGER},
+            commission   = #{commission,jdbcType=DECIMAL},
+            tax          = #{tax,jdbcType=DECIMAL},
+            day          = #{day,jdbcType=VARCHAR},
+            month        = #{month,jdbcType=VARCHAR},
+            year         = #{year,jdbcType=VARCHAR},
+            broker_id    = #{brokerId,jdbcType=VARCHAR},
+            created_time = #{createdTime,jdbcType=TIMESTAMP},
+            updated_time = #{updatedTime,jdbcType=TIMESTAMP},
+            trans_fee    = #{transFee,jdbcType=DECIMAL},
+            term         = #{term,jdbcType=VARCHAR},
+            row_key      = #{rowKey,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+
+    <select id="getByIds" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from trade_detail where id in
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="queryAndOrder" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from trade_detail
+
+        <where>
+            <if test="code != null">
+                and code = #{code,jdbcType=VARCHAR}
+            </if>
+            <if test="opt != null">
+                and opt = #{opt,jdbcType=INTEGER}
+            </if>
+
+            <if test="clear == 1">
+                and term is not null
+            </if>
+
+            <if test="clear == 0">
+                and term is null
+            </if>
+
+            <if test="startTime != null">
+                and trade_time >= #{startTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="endTime != null">
+                and trade_time &lt;= #{endTime,jdbcType=TIMESTAMP}
+            </if>
+
+        </where>
+
+        order by
+
+        <foreach item="value" index="key" collection="sortMap.entrySet()" separator=",">
+            ${key} ${value}
+        </foreach>
+    </select>
+
+    <select id="getSumStockFlows" resultType="com.doorway.tradememo.vo.CapitalFlowVO" parameterType="java.lang.String">
+        # SELECT
+        # a.time as time,
+        # a.flow as flow,
+        # @dp:=@dp+a.flow as sumFlow
+        # FROM (
+        SELECT
+        ${period} time,
+        sum(price*vol+tax+commission+trans_fee) flow,sum(tax) tax,sum(commission) commission,sum(trans_fee) trans_fee
+        FROM
+        trade_detail
+        <where>
+
+            <if test="code != null">
+                and code = #{code,jdbcType=VARCHAR}
+            </if>
+            <if test="start != null and period == 'day'">
+                and day >= #{start,jdbcType=VARCHAR}
+            </if>
+            <if test="end != null and period == 'day'">
+                and day &lt;= #{end,jdbcType=VARCHAR}
+            </if>
+
+            <if test="start != null and period == 'month'">
+                and month >= #{start,jdbcType=VARCHAR}
+            </if>
+            <if test="end != null and period == 'month'">
+                and month &lt;= #{end,jdbcType=VARCHAR}
+            </if>
+
+            <if test="start != null and period == 'year'">
+                and year >= #{start,jdbcType=VARCHAR}
+            </if>
+            <if test="end != null and period == 'day'">
+                and year &lt;= #{end,jdbcType=VARCHAR}
+            </if>
+
+            <if test="opt != null">
+                and opt = #{opt,jdbcType=BOOLEAN}
+            </if>
+        </where>
+        GROUP BY
+        ${period}
+        ORDER BY
+        ${period}
+        asc
+
+        # ) a
+    </select>
+
+    <select id="getDistSumStockFlows" resultType="com.doorway.tradememo.vo.CapitalFlowVO" parameterType="java.lang.String">
+        # SELECT
+        # a.time as time,
+        # a.flow as flow,
+        # @dp:=@dp+a.flow as sumFlow
+        # FROM (
+        SELECT
+               code,
+        ${period} time,
+        sum(price*vol+tax+commission+trans_fee) flow,sum(tax) tax,sum(commission) commission,sum(trans_fee) trans_fee
+        FROM
+        trade_detail
+        <where>
+
+            <if test="code != null">
+                and code = #{code,jdbcType=VARCHAR}
+            </if>
+            <if test="start != null and period == 'day'">
+                and day >= #{start,jdbcType=VARCHAR}
+            </if>
+            <if test="end != null and period == 'day'">
+                and day &lt;= #{end,jdbcType=VARCHAR}
+            </if>
+
+            <if test="start != null and period == 'month'">
+                and month >= #{start,jdbcType=VARCHAR}
+            </if>
+            <if test="end != null and period == 'month'">
+                and month &lt;= #{end,jdbcType=VARCHAR}
+            </if>
+
+            <if test="start != null and period == 'year'">
+                and year >= #{start,jdbcType=VARCHAR}
+            </if>
+            <if test="end != null and period == 'day'">
+                and year &lt;= #{end,jdbcType=VARCHAR}
+            </if>
+
+            <if test="opt != null">
+                and opt = #{opt,jdbcType=BOOLEAN}
+            </if>
+        </where>
+        GROUP BY
+        ${period},code
+        ORDER BY
+        ${period}
+        asc
+
+        # ) a
+    </select>
+
+
+
+
+    <select id="getTradeTimes" resultType="java.util.Map" parameterType="java.lang.String">
+
+        select
+        ${period} time
+        ,count(1) times from trade_detail
+
+        <where>
+
+            <if test="code != null">
+                and code = #{code,jdbcType=VARCHAR}
+            </if>
+            <if test="start != null and period == 'day'">
+                and day >= #{start,jdbcType=VARCHAR}
+            </if>
+            <if test="end != null and period == 'day'">
+                and day &lt;= #{end,jdbcType=VARCHAR}
+            </if>
+
+            <if test="start != null and period == 'month'">
+                and month >= #{start,jdbcType=VARCHAR}
+            </if>
+            <if test="end != null and period == 'month'">
+                and month &lt;= #{end,jdbcType=VARCHAR}
+            </if>
+
+            <if test="start != null and period == 'year'">
+                and year >= #{start,jdbcType=VARCHAR}
+            </if>
+            <if test="end != null and period == 'day'">
+                and year &lt;= #{end,jdbcType=VARCHAR}
+            </if>
+
+        </where>
+        group by ${period}
+        order by ${period} asc
+    </select>
+
+
+    <select id="getByPojo" resultMap="BaseResultMap" parameterType="com.doorway.tradememo.domain.TradeDetail">
+        select
+        <include refid="Base_Column_List"/>
+        from trade_detail
+        <where>
+            <if test="id != null">
+                and id = #{id,jdbcType=VARCHAR}
+            </if>
+            <if test="userId != null">
+                and user_id = #{userId,jdbcType=VARCHAR}
+            </if>
+            <if test="tradeTime != null">
+                and trade_time = #{tradeTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="opt != null">
+                and opt = #{opt,jdbcType=BIT}
+            </if>
+            <if test="price != null">
+                and price = #{price,jdbcType=DECIMAL}
+            </if>
+            <if test="code != null">
+                and code = #{code,jdbcType=VARCHAR}
+            </if>
+            <if test="vol != null">
+                and vol = #{vol,jdbcType=INTEGER}
+            </if>
+            <if test="commission != null">
+                and commission = #{commission,jdbcType=DECIMAL}
+            </if>
+            <if test="tax != null">
+                and tax = #{tax,jdbcType=DECIMAL}
+            </if>
+            <if test="day != null">
+                and day = #{day,jdbcType=VARCHAR}
+            </if>
+            <if test="month != null">
+                and month = #{month,jdbcType=VARCHAR}
+            </if>
+            <if test="year != null">
+                and year = #{year,jdbcType=VARCHAR}
+            </if>
+            <if test="brokerId != null">
+                and broker_id = #{brokerId,jdbcType=VARCHAR}
+            </if>
+            <if test="createdTime != null">
+                and created_time = #{createdTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="updatedTime != null">
+                and updated_time = #{updatedTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="transFee != null">
+                and trans_fee = #{transFee,jdbcType=DECIMAL}
+            </if>
+            <if test="term != null">
+                and term = #{term,jdbcType=VARCHAR}
+            </if>
+            <if test="rowKey != null">
+                and row_key = #{rowKey,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+    <select id="getAll" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from trade_detail
+    </select>
+
+    <select id="getAllCount" resultType="java.lang.Integer">
+        select count(1)
+        from trade_detail
+    </select>
+
+    <insert id="saveBatch" parameterType="java.util.List">
+        insert into trade_detail (id, user_id, trade_time, opt, price, code, vol, commission, tax, day, month, year,
+        broker_id, created_time, updated_time, trans_fee, term, row_key)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.id,jdbcType=VARCHAR}, #{item.userId,jdbcType=VARCHAR}, #{item.tradeTime,jdbcType=TIMESTAMP},
+            #{item.opt,jdbcType=BIT}, #{item.price,jdbcType=DECIMAL}, #{item.code,jdbcType=VARCHAR},
+            #{item.vol,jdbcType=INTEGER}, #{item.commission,jdbcType=DECIMAL}, #{item.tax,jdbcType=DECIMAL},
+            #{item.day,jdbcType=VARCHAR}, #{item.month,jdbcType=VARCHAR}, #{item.year,jdbcType=VARCHAR},
+            #{item.brokerId,jdbcType=VARCHAR}, #{item.createdTime,jdbcType=TIMESTAMP},
+            #{item.updatedTime,jdbcType=TIMESTAMP}, #{item.transFee,jdbcType=DECIMAL}, #{item.term,jdbcType=VARCHAR},
+            #{item.rowKey,jdbcType=VARCHAR})
+        </foreach>
+    </insert>
+
+    <delete id="delByIds">
+        delete from trade_detail where id in
+        <foreach collection="list" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </delete>
+</mapper>

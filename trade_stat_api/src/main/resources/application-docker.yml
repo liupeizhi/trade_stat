@@ -1,0 +1,6 @@
+spring:
+  profiles: docker
+  datasource:
+    url: jdbc:mysql://trade_stat_db:3306/trade_memo?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8&useSSL=false&allowMultiQueries=true
+    username: root
+    password: 123456

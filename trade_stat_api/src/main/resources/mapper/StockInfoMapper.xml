@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.doorway.tradememo.mapper.StockInfoMapper" >
+    <resultMap id="BaseResultMap" type="com.doorway.tradememo.domain.StockInfo" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="code" property="code" jdbcType="VARCHAR" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="spelling" property="spelling" jdbcType="VARCHAR" />
+        <result column="market" property="market" jdbcType="VARCHAR" />
+        <result column="type" property="type" jdbcType="VARCHAR" />
+    </resultMap>
+    
+    <sql id="Base_Column_List" >
+        id, code, name, spelling, market, type
+    </sql>
+    
+    <select id="getById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select 
+        <include refid="Base_Column_List" />
+        from stock_info
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    
+    <delete id="delById" parameterType="java.lang.Integer" >
+        delete from stock_info
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    
+    <insert id="save" parameterType="com.doorway.tradememo.domain.StockInfo" useGeneratedKeys="true" keyProperty="id" >
+        insert into stock_info (code, name, spelling, 
+            market, type)
+        values (#{code,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{spelling,jdbcType=VARCHAR}, 
+            #{market,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR})
+    </insert>
+    
+    <update id="modifySelective" parameterType="com.doorway.tradememo.domain.StockInfo" >
+        update stock_info
+        <set >
+            <if test="code != null" >
+                code = #{code,jdbcType=VARCHAR},
+            </if>
+            <if test="name != null" >
+                name = #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="spelling != null" >
+                spelling = #{spelling,jdbcType=VARCHAR},
+            </if>
+            <if test="market != null" >
+                market = #{market,jdbcType=VARCHAR},
+            </if>
+            <if test="type != null" >
+                type = #{type,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    
+    <update id="modify" parameterType="com.doorway.tradememo.domain.StockInfo" >
+        update stock_info
+        set code = #{code,jdbcType=VARCHAR},
+            name = #{name,jdbcType=VARCHAR},
+            spelling = #{spelling,jdbcType=VARCHAR},
+            market = #{market,jdbcType=VARCHAR},
+            type = #{type,jdbcType=VARCHAR}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    
+    <select id="getByIds" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from stock_info where id in 
+        <foreach collection="list" item="item" open="(" separator="," close=")" >
+            #{item}
+        </foreach>
+    </select>
+    
+    <select id="getByPojo" resultMap="BaseResultMap" parameterType="com.doorway.tradememo.domain.StockInfo" >
+        select 
+        <include refid="Base_Column_List" />
+        from stock_info 
+        <where >
+            <if test="id != null" >
+                and id = #{id,jdbcType=INTEGER}
+            </if>
+            <if test="code != null" >
+                and code = #{code,jdbcType=VARCHAR}
+            </if>
+            <if test="name != null" >
+                and name = #{name,jdbcType=VARCHAR}
+            </if>
+            <if test="spelling != null" >
+                and spelling = #{spelling,jdbcType=VARCHAR}
+            </if>
+            <if test="market != null" >
+                and market = #{market,jdbcType=VARCHAR}
+            </if>
+            <if test="type != null" >
+                and type = #{type,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+    
+    <select id="getAll" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from stock_info
+    </select>
+    
+    <select id="getAllCount" resultType="java.lang.Integer" >
+        select count(1) from stock_info
+    </select>
+    
+    <insert id="saveBatch" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
+        insert into stock_info (code, name, spelling, market, type)
+        values
+        <foreach collection="list" item="item" separator="," >
+            (#{item.code,jdbcType=VARCHAR}, #{item.name,jdbcType=VARCHAR}, #{item.spelling,jdbcType=VARCHAR}, #{item.market,jdbcType=VARCHAR}, #{item.type,jdbcType=VARCHAR})
+        </foreach>
+    </insert>
+    
+    <delete id="delByIds" >
+        delete from stock_info where id in 
+        <foreach collection="list" item="item" open="(" separator="," close=")" >
+            #{item}
+        </foreach>
+    </delete>
+    
+    <delete id="delAll" >
+        delete from stock_info  
+    </delete>
+</mapper>

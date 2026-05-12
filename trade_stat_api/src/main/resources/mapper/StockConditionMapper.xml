@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.doorway.tradememo.mapper.StockConditionMapper" >
+    <resultMap id="BaseResultMap" type="com.doorway.tradememo.domain.StockQuotation" >
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="day" property="day" jdbcType="VARCHAR" />
+        <result column="high" property="high" jdbcType="DECIMAL" />
+        <result column="low" property="low" jdbcType="DECIMAL" />
+        <result column="open" property="open" jdbcType="DECIMAL" />
+        <result column="close" property="close" jdbcType="DECIMAL" />
+        <result column="code" property="code" jdbcType="VARCHAR" />
+        <result column="last_close" property="lastClose" jdbcType="DECIMAL" />
+        <result column="offset_value" property="offsetValue" jdbcType="DECIMAL" />
+        <result column="offset_rate" property="offsetRate" jdbcType="DECIMAL" />
+        <result column="turnover_rate" property="turnoverRate" jdbcType="DECIMAL" />
+        <result column="turnover" property="turnover" jdbcType="DECIMAL" />
+        <result column="turnover_value" property="turnoverValue" jdbcType="DECIMAL" />
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+        <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+    
+    <sql id="Base_Column_List" >
+        id, day, high, low, open, close, code, last_close, offset_value, offset_rate, turnover_rate, 
+        turnover, turnover_value, created_time, updated_time
+    </sql>
+    
+    <select id="getById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+        select 
+        <include refid="Base_Column_List" />
+        from stock_condition
+        where id = #{id,jdbcType=VARCHAR}
+    </select>
+    
+    <delete id="delById" parameterType="java.lang.String" >
+        delete from stock_condition
+        where id = #{id,jdbcType=VARCHAR}
+    </delete>
+    
+    <insert id="save" parameterType="com.doorway.tradememo.domain.StockQuotation" >
+        insert into stock_condition (id, day, high, 
+            low, open, close, 
+            code, last_close, offset_value, 
+            offset_rate, turnover_rate, turnover, 
+            turnover_value, created_time, updated_time
+            )
+        values (#{id,jdbcType=VARCHAR}, #{day,jdbcType=VARCHAR}, #{high,jdbcType=DECIMAL}, 
+            #{low,jdbcType=DECIMAL}, #{open,jdbcType=DECIMAL}, #{close,jdbcType=DECIMAL}, 
+            #{code,jdbcType=VARCHAR}, #{lastClose,jdbcType=DECIMAL}, #{offsetValue,jdbcType=DECIMAL}, 
+            #{offsetRate,jdbcType=DECIMAL}, #{turnoverRate,jdbcType=DECIMAL}, #{turnover,jdbcType=DECIMAL}, 
+            #{turnoverValue,jdbcType=DECIMAL}, #{createdTime,jdbcType=TIMESTAMP}, #{updatedTime,jdbcType=TIMESTAMP}
+            )
+    </insert>
+    
+    <update id="modifySelective" parameterType="com.doorway.tradememo.domain.StockQuotation" >
+        update stock_condition
+        <set >
+            <if test="day != null" >
+                day = #{day,jdbcType=VARCHAR},
+            </if>
+            <if test="high != null" >
+                high = #{high,jdbcType=DECIMAL},
+            </if>
+            <if test="low != null" >
+                low = #{low,jdbcType=DECIMAL},
+            </if>
+            <if test="open != null" >
+                open = #{open,jdbcType=DECIMAL},
+            </if>
+            <if test="close != null" >
+                close = #{close,jdbcType=DECIMAL},
+            </if>
+            <if test="code != null" >
+                code = #{code,jdbcType=VARCHAR},
+            </if>
+            <if test="lastClose != null" >
+                last_close = #{lastClose,jdbcType=DECIMAL},
+            </if>
+            <if test="offsetValue != null" >
+                offset_value = #{offsetValue,jdbcType=DECIMAL},
+            </if>
+            <if test="offsetRate != null" >
+                offset_rate = #{offsetRate,jdbcType=DECIMAL},
+            </if>
+            <if test="turnoverRate != null" >
+                turnover_rate = #{turnoverRate,jdbcType=DECIMAL},
+            </if>
+            <if test="turnover != null" >
+                turnover = #{turnover,jdbcType=DECIMAL},
+            </if>
+            <if test="turnoverValue != null" >
+                turnover_value = #{turnoverValue,jdbcType=DECIMAL},
+            </if>
+            <if test="createdTime != null" >
+                created_time = #{createdTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedTime != null" >
+                updated_time = #{updatedTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+    
+    <update id="modify" parameterType="com.doorway.tradememo.domain.StockQuotation" >
+        update stock_condition
+        set day = #{day,jdbcType=VARCHAR},
+            high = #{high,jdbcType=DECIMAL},
+            low = #{low,jdbcType=DECIMAL},
+            open = #{open,jdbcType=DECIMAL},
+            close = #{close,jdbcType=DECIMAL},
+            code = #{code,jdbcType=VARCHAR},
+            last_close = #{lastClose,jdbcType=DECIMAL},
+            offset_value = #{offsetValue,jdbcType=DECIMAL},
+            offset_rate = #{offsetRate,jdbcType=DECIMAL},
+            turnover_rate = #{turnoverRate,jdbcType=DECIMAL},
+            turnover = #{turnover,jdbcType=DECIMAL},
+            turnover_value = #{turnoverValue,jdbcType=DECIMAL},
+            created_time = #{createdTime,jdbcType=TIMESTAMP},
+            updated_time = #{updatedTime,jdbcType=TIMESTAMP}
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+    
+    <select id="getByIds" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from stock_condition where id in 
+        <foreach collection="list" item="item" open="(" separator="," close=")" >
+            #{item}
+        </foreach>
+    </select>
+    
+    <select id="getByPojo" resultMap="BaseResultMap" parameterType="com.doorway.tradememo.domain.StockQuotation" >
+        select 
+        <include refid="Base_Column_List" />
+        from stock_condition 
+        <where >
+            <if test="id != null" >
+                and id = #{id,jdbcType=VARCHAR}
+            </if>
+            <if test="day != null" >
+                and day = #{day,jdbcType=VARCHAR}
+            </if>
+            <if test="high != null" >
+                and high = #{high,jdbcType=DECIMAL}
+            </if>
+            <if test="low != null" >
+                and low = #{low,jdbcType=DECIMAL}
+            </if>
+            <if test="open != null" >
+                and open = #{open,jdbcType=DECIMAL}
+            </if>
+            <if test="close != null" >
+                and close = #{close,jdbcType=DECIMAL}
+            </if>
+            <if test="code != null" >
+                and code = #{code,jdbcType=VARCHAR}
+            </if>
+            <if test="lastClose != null" >
+                and last_close = #{lastClose,jdbcType=DECIMAL}
+            </if>
+            <if test="offsetValue != null" >
+                and offset_value = #{offsetValue,jdbcType=DECIMAL}
+            </if>
+            <if test="offsetRate != null" >
+                and offset_rate = #{offsetRate,jdbcType=DECIMAL}
+            </if>
+            <if test="turnoverRate != null" >
+                and turnover_rate = #{turnoverRate,jdbcType=DECIMAL}
+            </if>
+            <if test="turnover != null" >
+                and turnover = #{turnover,jdbcType=DECIMAL}
+            </if>
+            <if test="turnoverValue != null" >
+                and turnover_value = #{turnoverValue,jdbcType=DECIMAL}
+            </if>
+            <if test="createdTime != null" >
+                and created_time = #{createdTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="updatedTime != null" >
+                and updated_time = #{updatedTime,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+    </select>
+    
+    <select id="getAll" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from stock_condition
+    </select>
+    
+    <select id="getAllCount" resultType="java.lang.Integer" >
+        select count(1) from stock_condition
+    </select>
+    
+    <insert id="saveBatch" parameterType="java.util.List" >
+        insert into stock_condition (id, day, high, low, open, close, code, last_close, offset_value, offset_rate, turnover_rate, turnover, turnover_value, created_time, updated_time)
+        values
+        <foreach collection="list" item="item" separator="," >
+            (#{item.id,jdbcType=VARCHAR}, #{item.day,jdbcType=VARCHAR}, #{item.high,jdbcType=DECIMAL}, #{item.low,jdbcType=DECIMAL}, #{item.open,jdbcType=DECIMAL}, #{item.close,jdbcType=DECIMAL}, #{item.code,jdbcType=VARCHAR}, #{item.lastClose,jdbcType=DECIMAL}, #{item.offsetValue,jdbcType=DECIMAL}, #{item.offsetRate,jdbcType=DECIMAL}, #{item.turnoverRate,jdbcType=DECIMAL}, #{item.turnover,jdbcType=DECIMAL}, #{item.turnoverValue,jdbcType=DECIMAL}, #{item.createdTime,jdbcType=TIMESTAMP}, #{item.updatedTime,jdbcType=TIMESTAMP})
+        </foreach>
+    </insert>
+    
+    <delete id="delByIds" >
+        delete from stock_condition where id in 
+        <foreach collection="list" item="item" open="(" separator="," close=")" >
+            #{item}
+        </foreach>
+    </delete>
+</mapper>

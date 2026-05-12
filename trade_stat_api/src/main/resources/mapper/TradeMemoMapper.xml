@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.doorway.tradememo.mapper.TradeMemoMapper" >
+    <resultMap id="BaseResultMap" type="com.doorway.tradememo.domain.TradeMemo" >
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="trade_id" property="tradeId" jdbcType="VARCHAR" />
+        <result column="user_id" property="userId" jdbcType="VARCHAR" />
+        <result column="title" property="title" jdbcType="VARCHAR" />
+        <result column="content" property="content" jdbcType="VARCHAR" />
+        <result column="tenant_id" property="tenantId" jdbcType="VARCHAR" />
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+        <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+    
+    <sql id="Base_Column_List" >
+        id, trade_id, user_id, title, content, tenant_id, created_time, updated_time
+    </sql>
+    
+    <select id="getById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+        select 
+        <include refid="Base_Column_List" />
+        from trade_memo
+        where id = #{id,jdbcType=VARCHAR}
+    </select>
+    
+    <delete id="delById" parameterType="java.lang.String" >
+        delete from trade_memo
+        where id = #{id,jdbcType=VARCHAR}
+    </delete>
+    
+    <insert id="save" parameterType="com.doorway.tradememo.domain.TradeMemo" >
+        insert into trade_memo (id, trade_id, user_id, 
+            title, content, tenant_id, 
+            created_time, updated_time)
+        values (#{id,jdbcType=VARCHAR}, #{tradeId,jdbcType=VARCHAR}, #{userId,jdbcType=VARCHAR}, 
+            #{title,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR}, #{tenantId,jdbcType=VARCHAR}, 
+            #{createdTime,jdbcType=TIMESTAMP}, #{updatedTime,jdbcType=TIMESTAMP})
+    </insert>
+    
+    <update id="modifySelective" parameterType="com.doorway.tradememo.domain.TradeMemo" >
+        update trade_memo
+        <set >
+            <if test="tradeId != null" >
+                trade_id = #{tradeId,jdbcType=VARCHAR},
+            </if>
+            <if test="userId != null" >
+                user_id = #{userId,jdbcType=VARCHAR},
+            </if>
+            <if test="title != null" >
+                title = #{title,jdbcType=VARCHAR},
+            </if>
+            <if test="content != null" >
+                content = #{content,jdbcType=VARCHAR},
+            </if>
+            <if test="tenantId != null" >
+                tenant_id = #{tenantId,jdbcType=VARCHAR},
+            </if>
+            <if test="createdTime != null" >
+                created_time = #{createdTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedTime != null" >
+                updated_time = #{updatedTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+    
+    <update id="modify" parameterType="com.doorway.tradememo.domain.TradeMemo" >
+        update trade_memo
+        set trade_id = #{tradeId,jdbcType=VARCHAR},
+            user_id = #{userId,jdbcType=VARCHAR},
+            title = #{title,jdbcType=VARCHAR},
+            content = #{content,jdbcType=VARCHAR},
+            tenant_id = #{tenantId,jdbcType=VARCHAR},
+            created_time = #{createdTime,jdbcType=TIMESTAMP},
+            updated_time = #{updatedTime,jdbcType=TIMESTAMP}
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+    
+    <select id="getByIds" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from trade_memo where id in 
+        <foreach collection="list" item="item" open="(" separator="," close=")" >
+            #{item}
+        </foreach>
+    </select>
+    
+    <select id="getByPojo" resultMap="BaseResultMap" parameterType="com.doorway.tradememo.domain.TradeMemo" >
+        select 
+        <include refid="Base_Column_List" />
+        from trade_memo 
+        <where >
+            <if test="id != null" >
+                and id = #{id,jdbcType=VARCHAR}
+            </if>
+            <if test="tradeId != null" >
+                and trade_id = #{tradeId,jdbcType=VARCHAR}
+            </if>
+            <if test="userId != null" >
+                and user_id = #{userId,jdbcType=VARCHAR}
+            </if>
+            <if test="title != null" >
+                and title = #{title,jdbcType=VARCHAR}
+            </if>
+            <if test="content != null" >
+                and content = #{content,jdbcType=VARCHAR}
+            </if>
+            <if test="tenantId != null" >
+                and tenant_id = #{tenantId,jdbcType=VARCHAR}
+            </if>
+            <if test="createdTime != null" >
+                and created_time = #{createdTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="updatedTime != null" >
+                and updated_time = #{updatedTime,jdbcType=TIMESTAMP}
+            </if>
+        </where>
+    </select>
+    
+    <select id="getAll" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from trade_memo
+    </select>
+    
+    <select id="getAllCount" resultType="java.lang.Integer" >
+        select count(1) from trade_memo
+    </select>
+    
+    <insert id="saveBatch" parameterType="java.util.List" >
+        insert into trade_memo (id, trade_id, user_id, title, content, tenant_id, created_time, updated_time)
+        values
+        <foreach collection="list" item="item" separator="," >
+            (#{item.id,jdbcType=VARCHAR}, #{item.tradeId,jdbcType=VARCHAR}, #{item.userId,jdbcType=VARCHAR}, #{item.title,jdbcType=VARCHAR}, #{item.content,jdbcType=VARCHAR}, #{item.tenantId,jdbcType=VARCHAR}, #{item.createdTime,jdbcType=TIMESTAMP}, #{item.updatedTime,jdbcType=TIMESTAMP})
+        </foreach>
+    </insert>
+    
+    <delete id="delByIds" >
+        delete from trade_memo where id in 
+        <foreach collection="list" item="item" open="(" separator="," close=")" >
+            #{item}
+        </foreach>
+    </delete>
+</mapper>

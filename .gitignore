@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Build
+dist/
+build/
+target/
+*.jar
+*.class
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temp
+*.tmp
+*.swp
+.cache/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Umi
+.src/.umi/
+.umi/
+.umi-production/

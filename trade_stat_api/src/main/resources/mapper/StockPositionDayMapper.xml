@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.doorway.tradememo.mapper.StockPositionDayMapper" >
+    <resultMap id="BaseResultMap" type="com.doorway.tradememo.domain.StockPositionDay" >
+        <id column="id" property="id" jdbcType="VARCHAR" />
+        <result column="day" property="day" jdbcType="VARCHAR" />
+        <result column="code" property="code" jdbcType="VARCHAR" />
+        <result column="vol" property="vol" jdbcType="INTEGER" />
+        <result column="avg_cost" property="avgCost" jdbcType="DECIMAL" />
+        <result column="close_price" property="closePrice" jdbcType="DECIMAL" />
+        <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+        <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP" />
+        <result column="total_profit" property="totalProfit" jdbcType="DECIMAL" />
+        <result column="day_profit" property="dayProfit" jdbcType="DECIMAL" />
+        <result column="term_trade_times" property="termTradeTimes" jdbcType="INTEGER" />
+        <result column="term_open_time" property="termOpenTime" jdbcType="TIMESTAMP" />
+        <result column="term_expend" property="termExpend" jdbcType="DECIMAL" />
+        <result column="term_income" property="termIncome" jdbcType="DECIMAL" />
+        <result column="total_expend" property="totalExpend" jdbcType="DECIMAL" />
+        <result column="total_income" property="totalIncome" jdbcType="DECIMAL" />
+    </resultMap>
+    
+    <sql id="Base_Column_List" >
+        id, day, code, vol, avg_cost, close_price, created_time, updated_time, total_profit, 
+        day_profit, term_trade_times, term_open_time, term_expend, term_income, total_expend, 
+        total_income
+    </sql>
+    
+    <select id="getById" resultMap="BaseResultMap" parameterType="java.lang.String" >
+        select 
+        <include refid="Base_Column_List" />
+        from stock_position_day
+        where id = #{id,jdbcType=VARCHAR}
+    </select>
+    
+    <delete id="delById" parameterType="java.lang.String" >
+        delete from stock_position_day
+        where id = #{id,jdbcType=VARCHAR}
+    </delete>
+    <select id="getBetweenDay" resultMap="BaseResultMap"  >
+        select
+        <include refid="Base_Column_List" />
+        from stock_position_day
+        <where >
+
+            <if test="start != null" >
+                and day >= #{start,jdbcType=VARCHAR}
+            </if>
+            <if test="end != null" >
+                and day &lt;= #{end,jdbcType=VARCHAR}
+            </if>
+            <if test="code != null" >
+                and code = #{code,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </select>
+
+
+    <select id="getStockPeriodProfits" resultType="java.util.Map" parameterType="java.lang.String">
+        SELECT
+        ${period} time,
+        sum(day_profit) profit
+        FROM
+        stock_position_day
+        <where>
+
+            <if test="code != null">
+                and code = #{code,jdbcType=VARCHAR}
+            </if>
+            <if test="start != null and period == 'day'">
+                and day >= #{start,jdbcType=VARCHAR}
+            </if>
+            <if test="end != null and period == 'day'">
+                and day &lt;= #{end,jdbcType=VARCHAR}
+            </if>
+
+            <if test="start != null and period == 'month'">
+                and month >= #{start,jdbcType=VARCHAR}
+            </if>
+            <if test="end != null and period == 'month'">
+                and month &lt;= #{end,jdbcType=VARCHAR}
+            </if>
+
+            <if test="start != null and period == 'year'">
+                and year >= #{start,jdbcType=VARCHAR}
+            </if>
+            <if test="end != null and period == 'year'">
+                and year &lt;= #{end,jdbcType=VARCHAR}
+            </if>
+        </where>
+        GROUP BY
+        ${period}
+        ORDER BY
+        ${period}
+        asc
+
+    </select>
+
+    <insert id="save" parameterType="com.doorway.tradememo.domain.StockPositionDay" >
+        insert into stock_position_day (id, day, code, 
+            vol, avg_cost, close_price, 
+            created_time, updated_time, total_profit, 
+            day_profit, term_trade_times, term_open_time, 
+            term_expend, term_income, total_expend, 
+            total_income)
+        values (#{id,jdbcType=VARCHAR}, #{day,jdbcType=VARCHAR}, #{code,jdbcType=VARCHAR}, 
+            #{vol,jdbcType=INTEGER}, #{avgCost,jdbcType=DECIMAL}, #{closePrice,jdbcType=DECIMAL}, 
+            #{createdTime,jdbcType=TIMESTAMP}, #{updatedTime,jdbcType=TIMESTAMP}, #{totalProfit,jdbcType=DECIMAL}, 
+            #{dayProfit,jdbcType=DECIMAL}, #{termTradeTimes,jdbcType=INTEGER}, #{termOpenTime,jdbcType=TIMESTAMP}, 
+            #{termExpend,jdbcType=DECIMAL}, #{termIncome,jdbcType=DECIMAL}, #{totalExpend,jdbcType=DECIMAL}, 
+            #{totalIncome,jdbcType=DECIMAL})
+    </insert>
+    
+    <update id="modifySelective" parameterType="com.doorway.tradememo.domain.StockPositionDay" >
+        update stock_position_day
+        <set >
+            <if test="day != null" >
+                day = #{day,jdbcType=VARCHAR},
+            </if>
+            <if test="code != null" >
+                code = #{code,jdbcType=VARCHAR},
+            </if>
+            <if test="vol != null" >
+                vol = #{vol,jdbcType=INTEGER},
+            </if>
+            <if test="avgCost != null" >
+                avg_cost = #{avgCost,jdbcType=DECIMAL},
+            </if>
+            <if test="closePrice != null" >
+                close_price = #{closePrice,jdbcType=DECIMAL},
+            </if>
+            <if test="createdTime != null" >
+                created_time = #{createdTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updatedTime != null" >
+                updated_time = #{updatedTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="totalProfit != null" >
+                total_profit = #{totalProfit,jdbcType=DECIMAL},
+            </if>
+            <if test="dayProfit != null" >
+                day_profit = #{dayProfit,jdbcType=DECIMAL},
+            </if>
+            <if test="termTradeTimes != null" >
+                term_trade_times = #{termTradeTimes,jdbcType=INTEGER},
+            </if>
+            <if test="termOpenTime != null" >
+                term_open_time = #{termOpenTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="termExpend != null" >
+                term_expend = #{termExpend,jdbcType=DECIMAL},
+            </if>
+            <if test="termIncome != null" >
+                term_income = #{termIncome,jdbcType=DECIMAL},
+            </if>
+            <if test="totalExpend != null" >
+                total_expend = #{totalExpend,jdbcType=DECIMAL},
+            </if>
+            <if test="totalIncome != null" >
+                total_income = #{totalIncome,jdbcType=DECIMAL},
+            </if>
+        </set>
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+    
+    <update id="modify" parameterType="com.doorway.tradememo.domain.StockPositionDay" >
+        update stock_position_day
+        set day = #{day,jdbcType=VARCHAR},
+            code = #{code,jdbcType=VARCHAR},
+            vol = #{vol,jdbcType=INTEGER},
+            avg_cost = #{avgCost,jdbcType=DECIMAL},
+            close_price = #{closePrice,jdbcType=DECIMAL},
+            created_time = #{createdTime,jdbcType=TIMESTAMP},
+            updated_time = #{updatedTime,jdbcType=TIMESTAMP},
+            total_profit = #{totalProfit,jdbcType=DECIMAL},
+            day_profit = #{dayProfit,jdbcType=DECIMAL},
+            term_trade_times = #{termTradeTimes,jdbcType=INTEGER},
+            term_open_time = #{termOpenTime,jdbcType=TIMESTAMP},
+            term_expend = #{termExpend,jdbcType=DECIMAL},
+            term_income = #{termIncome,jdbcType=DECIMAL},
+            total_expend = #{totalExpend,jdbcType=DECIMAL},
+            total_income = #{totalIncome,jdbcType=DECIMAL}
+        where id = #{id,jdbcType=VARCHAR}
+    </update>
+    
+    <select id="getByIds" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from stock_position_day where id in 
+        <foreach collection="list" item="item" open="(" separator="," close=")" >
+            #{item}
+        </foreach>
+    </select>
+    
+    <select id="getByPojo" resultMap="BaseResultMap" parameterType="com.doorway.tradememo.domain.StockPositionDay" >
+        select 
+        <include refid="Base_Column_List" />
+        from stock_position_day 
+        <where >
+            <if test="id != null" >
+                and id = #{id,jdbcType=VARCHAR}
+            </if>
+            <if test="day != null" >
+                and day = #{day,jdbcType=VARCHAR}
+            </if>
+            <if test="code != null" >
+                and code = #{code,jdbcType=VARCHAR}
+            </if>
+            <if test="vol != null" >
+                and vol = #{vol,jdbcType=INTEGER}
+            </if>
+            <if test="avgCost != null" >
+                and avg_cost = #{avgCost,jdbcType=DECIMAL}
+            </if>
+            <if test="closePrice != null" >
+                and close_price = #{closePrice,jdbcType=DECIMAL}
+            </if>
+            <if test="createdTime != null" >
+                and created_time = #{createdTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="updatedTime != null" >
+                and updated_time = #{updatedTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="totalProfit != null" >
+                and total_profit = #{totalProfit,jdbcType=DECIMAL}
+            </if>
+            <if test="dayProfit != null" >
+                and day_profit = #{dayProfit,jdbcType=DECIMAL}
+            </if>
+            <if test="termTradeTimes != null" >
+                and term_trade_times = #{termTradeTimes,jdbcType=INTEGER}
+            </if>
+            <if test="termOpenTime != null" >
+                and term_open_time = #{termOpenTime,jdbcType=TIMESTAMP}
+            </if>
+            <if test="termExpend != null" >
+                and term_expend = #{termExpend,jdbcType=DECIMAL}
+            </if>
+            <if test="termIncome != null" >
+                and term_income = #{termIncome,jdbcType=DECIMAL}
+            </if>
+            <if test="totalExpend != null" >
+                and total_expend = #{totalExpend,jdbcType=DECIMAL}
+            </if>
+            <if test="totalIncome != null" >
+                and total_income = #{totalIncome,jdbcType=DECIMAL}
+            </if>
+        </where>
+    </select>
+    
+    <select id="getAll" resultMap="BaseResultMap" >
+        select 
+        <include refid="Base_Column_List" />
+        from stock_position_day
+    </select>
+    
+    <select id="getAllCount" resultType="java.lang.Integer" >
+        select count(1) from stock_position_day
+    </select>
+    
+    <insert id="saveBatch" parameterType="java.util.List" >
+        insert into stock_position_day (id, day, code, vol, avg_cost, close_price, created_time, updated_time, total_profit, day_profit, term_trade_times, term_open_time, term_expend, term_income, total_expend, total_income)
+        values
+        <foreach collection="list" item="item" separator="," >
+            (#{item.id,jdbcType=VARCHAR}, #{item.day,jdbcType=VARCHAR}, #{item.code,jdbcType=VARCHAR}, #{item.vol,jdbcType=INTEGER}, #{item.avgCost,jdbcType=DECIMAL}, #{item.closePrice,jdbcType=DECIMAL}, #{item.createdTime,jdbcType=TIMESTAMP}, #{item.updatedTime,jdbcType=TIMESTAMP}, #{item.totalProfit,jdbcType=DECIMAL}, #{item.dayProfit,jdbcType=DECIMAL}, #{item.termTradeTimes,jdbcType=INTEGER}, #{item.termOpenTime,jdbcType=TIMESTAMP}, #{item.termExpend,jdbcType=DECIMAL}, #{item.termIncome,jdbcType=DECIMAL}, #{item.totalExpend,jdbcType=DECIMAL}, #{item.totalIncome,jdbcType=DECIMAL})
+        </foreach>
+    </insert>
+    
+    <delete id="delByIds" >
+        delete from stock_position_day where id in 
+        <foreach collection="list" item="item" open="(" separator="," close=")" >
+            #{item}
+        </foreach>
+    </delete>
+    
+    <delete id="delAll" >
+        delete from stock_position_day  
+    </delete>
+</mapper>

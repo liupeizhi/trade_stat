@@ -1,0 +1,9 @@
+<!-- mybatis-config.xml -->
+<configuration>
+    <settings>
+        <!-- 当查询结果为空时，返回空实例而不是null -->
+        <setting name="returnInstanceForEmptyRow" value="true"/>
+        <!-- 调用返回类型为集合的方法时返回空集合而不是null -->
+        <setting name="lazyLoadingEnabled" value="true"/>
+    </settings>
+</configuration>
