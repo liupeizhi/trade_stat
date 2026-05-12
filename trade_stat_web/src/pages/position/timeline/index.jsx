@@ -1,4 +1,4 @@
-import {Button, Calendar, Col, List, Modal, Row, Space} from 'antd';
+import {Button, Calendar, Col, Divider, List, Modal, Row, Space, Table} from 'antd';
 import moment from 'moment';
 import React from "react";
 import * as echarts from 'echarts';
@@ -21,6 +21,11 @@ class TimeLine extends React.Component {
       details: [],
       legendData: [],
       pieData: [],
+      // 操作记录相关状态
+      operationRecords: [],
+      operationLoading: false,
+      selectedDay: '',
+      heldCodes: [],
 
     };
     this.chart = null;
@@ -102,7 +107,8 @@ class TimeLine extends React.Component {
 
   onSelect = async value => {
     console.log("选择："+value)
-    const listData = this.getListData(value.format('YYYY-MM-DD'));
+    const day = value.format('YYYY-MM-DD');
+    const listData = this.getListData(day);
     if (!listData) {
       return;
     }
@@ -110,7 +116,8 @@ class TimeLine extends React.Component {
     let pieData = [];
     let legendData = [];
     let total = 0;
-    let nums = []
+    let nums = [];
+    let heldCodes = [];
     for (let i = 0; i < listData.length; i++) {
       let profit = listData[i].profit;
       let profitRate = listData[i].profitRate;
@@ -128,6 +135,7 @@ class TimeLine extends React.Component {
       let num = vol * price;
       total += num;
       nums.push({name: name, num: num});
+      heldCodes.push(code);
 
 
       details.push("持有：" + name + " " + vol + "股，平均成本：" + cost.toFixed(2) + ",总盈亏：" + profit.toFixed(2) + "¥,总盈亏率：" + (profitRate * 100).toFixed(2) + "%"+ ",当日盈亏：" + dayProfit.toFixed(2) + "¥,当日盈亏率：" + (dayProfitRate * 100).toFixed(2) + "%");
@@ -169,15 +177,57 @@ class TimeLine extends React.Component {
           },
         ],
       },
+      selectedDay: day,
+      heldCodes: heldCodes,
     })
     const notMerge = this.props.notMerge;
     const lazyUpdate = this.props.lazyUpdate;
-    let option = this.initOption(legendData, pieData,value.format('YYYY-MM-DD'));
+    let option = this.initOption(legendData, pieData,day);
     console.log("加载图形", document.getElementById("chart"));
     await this.initChart(document.getElementById("chart"));
     this.chart.setOption(option, notMerge, lazyUpdate);
 
+    // 获取当日操作记录
+    this.fetchDayOperationRecords(day, heldCodes);
 
+
+  };
+
+  // 获取某日的操作记录
+  fetchDayOperationRecords = (day, codes) => {
+    if (!codes || codes.length === 0) {
+      this.setState({ operationRecords: [], operationLoading: false });
+      return;
+    }
+
+    this.setState({ operationLoading: true, operationRecords: [] });
+
+    // 构建 Promise 数组，获取每个持仓股票当日的操作记录
+    const promises = codes.map(code => {
+      return fetch(`${API_BASE_URL}trade_details/raw_query?code=${code}&startTime=${day} 00:00:00&endTime=${day} 23:59:59`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.code === 0 && data.data) {
+            return data.data.map(item => ({ ...item, code: code }));
+          }
+          return [];
+        })
+        .catch(err => {
+          console.error(`获取${code}操作记录失败:`, err);
+          return [];
+        });
+    });
+
+    Promise.all(promises).then(results => {
+      // 合并所有操作记录
+      const allRecords = results.flat();
+      // 按时间排序
+      allRecords.sort((a, b) => (a.tradeTime || '').localeCompare(b.tradeTime || ''));
+      this.setState({
+        operationRecords: allRecords,
+        operationLoading: false,
+      });
+    });
   };
   dateCellRender = (value) => {
     const listData = this.getListData(value.format('YYYY-MM-DD'));
@@ -272,7 +322,58 @@ class TimeLine extends React.Component {
     });
 
   render() {
-    const {width, height, value, visible, pieConfig} = this.state;
+    const {width, height, value, visible, pieConfig, operationRecords, operationLoading, selectedDay} = this.state;
+
+    // 操作记录表格列定义
+    const operationColumns = [
+      {
+        title: '时间',
+        dataIndex: 'tradeTime',
+        key: 'tradeTime',
+        width: 180,
+      },
+      {
+        title: '股票代码',
+        dataIndex: 'code',
+        key: 'code',
+        width: 100,
+      },
+      {
+        title: '方向',
+        dataIndex: 'opt',
+        key: 'opt',
+        width: 60,
+        render: (text) => text ? '买入' : '卖出',
+      },
+      {
+        title: '数量',
+        dataIndex: 'vol',
+        key: 'vol',
+        width: 100,
+      },
+      {
+        title: '价格',
+        dataIndex: 'price',
+        key: 'price',
+        width: 100,
+        render: (text) => typeof text === 'number' ? text.toFixed(2) : '0.00',
+      },
+      {
+        title: '佣金',
+        dataIndex: 'commission',
+        key: 'commission',
+        width: 80,
+        render: (text) => typeof text === 'number' ? text.toFixed(2) : '0.00',
+      },
+      {
+        title: '税费',
+        dataIndex: 'tax',
+        key: 'tax',
+        width: 80,
+        render: (text) => typeof text === 'number' ? text.toFixed(2) : '0.00',
+      },
+    ];
+
     return (
       <>
         <style>
@@ -300,7 +401,7 @@ class TimeLine extends React.Component {
 
 
         <Modal
-          title="持仓详情"
+          title={"持仓详情 (" + selectedDay + ")"}
           visible={visible}
           closable={false}
           maskClosable={false}
@@ -314,7 +415,7 @@ class TimeLine extends React.Component {
 
           ]}
         >
-          <Row>
+          <Row gutter={16}>
             <Col span={11} >
               <div
                 className="default-chart"
@@ -327,7 +428,7 @@ class TimeLine extends React.Component {
               <div
                 id="scrollableDiv"
                 style={{
-                  height: 500,
+                  height: 300,
                   overflow: 'auto',
                   padding: '0 16px',
                   // border: '1px solid rgba(140, 140, 140, 0.35)',
@@ -351,6 +452,19 @@ class TimeLine extends React.Component {
               </div>
             </Col>
           </Row>
+          <Divider dashed />
+          <div>
+            <h4>当日操作记录</h4>
+            <Table
+              columns={operationColumns}
+              dataSource={operationRecords}
+              rowKey={(record, index) => index}
+              loading={operationLoading}
+              pagination={operationRecords.length > 10 ? { pageSize: 10 } : false}
+              size="small"
+              scroll={{ x: 700 }}
+            />
+          </div>
 
 
         </Modal>
